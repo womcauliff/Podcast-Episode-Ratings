@@ -3,8 +3,9 @@ var mongoose = require('mongoose');
 // creates Schema class
 var Schema = mongoose.Schema;
 
-
 var Episode = require('./Episode.js');
+var Image = require('./Image.js');
+
 // Creates Podcast schema
 var PodcastSchema = new Schema({
   title: {
@@ -47,6 +48,7 @@ PodcastSchema.pre('save', function(next){
 
 PodcastSchema.pre('remove', function(next){
   Episode.remove({podcast_id : this._id }).exec();
+  Image.remove({podcast_id : this._id }).exec();
   next();
 })
 

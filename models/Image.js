@@ -16,6 +16,10 @@ var ImageSchema = new Schema({
   link: {
   	type: String,
   	trim: true
+  },
+  podcast_id: {
+		type: Schema.Types.ObjectId,
+		ref: 'Podcast'
   }
 },
 {

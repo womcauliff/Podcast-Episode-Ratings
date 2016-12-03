@@ -1,6 +1,7 @@
 //Seeds mongodb with example podcast and episode.
 
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 
 // Configures database with mongoose
 mongoose.connect((process.env.MONGODB_URI ||'mongodb://localhost/podrater'));
@@ -20,13 +21,6 @@ db.once('open', function() {
 var Image = require('./models/Image.js');
 var Episode = require('./models/Episode.js');
 var Podcast = require('./models/Podcast.js');
-
-
-var newImage = new Image({
-	title: "CodeNewbie",
-	url: "https://assets.blubrry.com/coverart/orig/220808.jpg",
-	link: "http://www.codenewbie.org/podcast"
-});
 
 Podcast
 	.find({})
@@ -54,67 +48,83 @@ Podcast
 			// });
 
 			//v3 - ES6 map
+			// Changed from Podcast.remove(...) because otherwise 'remove' middleware
+			// for Podcast will not be invoked.
 			return podcastDocs.map(doc => doc.remove());
-			// return podcastDocs.map(doc => (
-			// 	Podcast.remove({_id: doc._id}).exec()
-			// 	) );
 		}
-
-		
 }).then(function(deferreds) {
-	Promise.all(deferreds)
-		.then(function() {
-			var newPodcast = new Podcast({
-				title: "CodeNewbie",
-				link: "http://www.codenewbie.org/podcast",
-				description: "Stories and interviews from people on their coding journey.",
-				language: "en-US",
-				image: newImage
-			});
+	/*
+	 * The following Promise resolves after all of the promises within `deferreds`
+	 * have been resolved (this occurs after all podcasts, episodes, and images
+	 * have been deleted). */
+	 Promise.all(deferreds)
+	.then(function() {
 
-			newPodcast.save(function(err, podcastDoc){
-				// log any errors
-				if(err){
-					console.log(err);
-				}
-				// otherwise
-				else {
-					console.log("Podcast loaded successfully");
-					var Episode114 = new Episode({
-						title: "Ep. 114 – What's an Innovation Accountant? (Nick DePrey)",
-						podcast_id : podcastDoc._id
-					});
-					Episode114.save(function(err, doc){
-						// log any errors
-						if(err){
-							console.log(err);
-						} 
-						// otherwise
-						else {
-							// using the Article id passed in the id parameter of our url, 
-							// prepare a query that finds the matching Article in our db
-							// and update it to make it's lone note the one we just saved
-							Podcast.findOneAndUpdate({'_id': podcastDoc._id}, {$push: {'episodes': doc._id}}, {new: true})
-							// execute the above query
-							.exec(function(err, doc){
-								// log any errors
-								if (err){
-									console.log(err);
-								} else {
-									// or send the document to the browser
-									console.log('successfully saved Episode to Podcast');
-								}
-								mongoose.disconnect();
-								console.log('disconnected');
-							});
-						}
-					});	
-				}
+		var newPodcast = new Podcast({
+			title: "CodeNewbie",
+			link: "http://www.codenewbie.org/podcast",
+			description: "Stories and interviews from people on their coding" +
+			" journey.",
+			language: "en-US" }
+		);
+
+		//Save podcast to db
+		newPodcast.save()
+		//Save episode to
+		.then(function(podcastDoc){
+			console.log("Podcast loaded successfully.");
+
+			var Episode114 = new Episode({
+				title: "Ep. 114 – What's an Innovation Accountant? (Nick DePrey)",
+				podcast_id : podcastDoc._id
 			});
-			// mongoose.disconnect();		
+			return Episode114.save();//returns promise
+		})
+		//Add the episode to the podcast
+		.then(function(episode) {
+			console.log("Episode loaded successfully.");
+
+			return Podcast.findOneAndUpdate(
+				{'_id': episode.podcast_id},
+				{$push: {'episodes': episode._id}},
+				{new: true}
+			)
+			.exec();// execute the above query, returns promise
+		})
+		//Save Image to db
+		.then(function(podcastDoc){
+			console.log('successfully saved Episode to Podcast');
+
+			var newImage = new Image({
+				title: "CodeNewbie",
+				url: "https://assets.blubrry.com/coverart/orig/220808.jpg",
+				link: "http://www.codenewbie.org/podcast",
+				podcast_id : podcastDoc._id
+			});
+			return newImage.save();//returns promise
+		})
+		//Add the Image to Podcast
+		.then(function(imageDoc) {
+			console.log("Image loaded successfully.");
+
+			return Podcast.findOneAndUpdate(
+				{'_id': imageDoc.podcast_id},
+				{$set: {'image': imageDoc._id}},
+				{new: true}
+			)
+			.exec();// execute the above query, returns promise
+		})
+		//Close db connection
+		.then(function(podcastDoc) {
+			console.log('successfully saved Image to Podcast');
+
+			mongoose.disconnect();
+			console.log('disconnected');
+		})
+		.catch(function(err) {
+			console.log(err);
+		});
 	});
-	
-	// console.log('disconnected');
 });
 
 
