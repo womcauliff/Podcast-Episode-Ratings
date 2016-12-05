@@ -32,6 +32,24 @@ db.once('open', function() {
 // Makes public a static directory
 app.use(express.static(process.cwd() + '/public'));
 
+// Imports and mounts express Router objects
+var podcast_routes = require('./controllers/podcast_routes.js');
+var error_handling = require('./controllers/error_handling.js');
+
+app.use('/api/podcast', podcast_routes);
+
+// Assumes 404, as no routes above responded
+app.get('*', function(req, res, next){
+	console.log("no pages found");
+	var err = new Error();
+	err.status = 404;
+	next(err);
+});
+
+// Adds Error middleware
+app.use(error_handling['404']);
+app.use(error_handling['500']);
+
 // Listening
 app.listen(app.get('port'), function() {
   console.log("Express server listening on port %d in %s mode", 

@@ -70,7 +70,7 @@ Podcast
 
 		//Save podcast to db
 		newPodcast.save()
-		//Save episode to
+		//Save episode to db
 		.then(function(podcastDoc){
 			console.log("Podcast loaded successfully.");
 
