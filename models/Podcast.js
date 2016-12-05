@@ -14,6 +14,11 @@ var PodcastSchema = new Schema({
     required: true,
     trim: true
   },
+  url_title: {
+    type: String,
+    unique: true,
+    required: true
+  },
   link: {
     type: String,
     required: true
@@ -34,18 +39,28 @@ var PodcastSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Episode'
   }]
-}
-,
+},
 {
   timestamps: true
 });
 
-//Removes query string from source URL
-PodcastSchema.pre('save', function(next){
-  this.link = this.link.split(/[?#]/)[0];
+/*
+ * Document Middleware (hooks)
+ */
+
+/* Before validating new Podcast document:
+ * - generates `url_title` from podcast title, replacing whitespace with `-`,
+ * and setting all characters to lowercase.
+ */
+PodcastSchema.pre('validate', function(next){
+  this.url_title = this.title.replace(/\W+/g, "-").toLowerCase();
   next();
 });
 
+/* Before removing Podcast document from db:
+ * - removes episode subdocuments
+ * - removes image subdocument
+ */
 PodcastSchema.pre('remove', function(next){
   Episode.remove({podcast_id : this._id }).exec();
   Image.remove({podcast_id : this._id }).exec();
