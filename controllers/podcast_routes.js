@@ -5,11 +5,13 @@ var Podcast = require('../models/Podcast.js');
 
 router.get('/', function(req, res) {
 	Podcast.find({}, function(err, docs){
+		// Returns error from db to be handled by error handling middleware
 		if (err) {
 			console.log(err);
+			return next(err);
 		}
 		else {
-			res.json(docs);
+			res.json({ "data" : docs});
 		}
 	});
 });

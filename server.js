@@ -9,7 +9,7 @@ var mongoose = require('mongoose');
 var app = express();
 app.set('port', (process.env.PORT || 5555));
 app.use(bodyParser.urlencoded({
-	extended: 5555
+	extended: true
 }));// Parse application/x-www-form-urlencoded
 app.use(bodyParser.json());
 app.use(logger('dev'));
