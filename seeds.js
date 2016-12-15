@@ -114,9 +114,46 @@ Podcast
 			)
 			.exec();// execute the above query, returns promise
 		})
+		.then(function() {
+			console.log('successfully saved Image to Podcast');
+
+			var newPodcast = new Podcast({
+				title: "This American Life",
+				link: "https://www.thisamericanlife.org",
+				description: "This American Life is a weekly public radio show, " +
+				"heard by 2.2 million people on more than 500 stations. Another 1.5 " +
+				"million people download the weekly podcast. It is hosted by Ira " +
+				"Glass, produced in collaboration with Chicago Public Media, " +
+				"delivered to stations by PRX The Public Radio Exchange, and has won" +
+				" all of the major broadcasting awards.",
+				language: "en-US" }
+			);
+			//Save podcast to db
+			return newPodcast.save();
+		})
+		.then(function(podcastDoc){
+			console.log("Podcast loaded successfully.");
+
+			var Episode604 = new Episode({
+				title: "#604: 20 Years Later",
+				podcast_id : podcastDoc._id
+			});
+			return Episode604.save();//returns promise
+		})
+		//Add the episode to the podcast
+		.then(function(episode) {
+			console.log("Episode loaded successfully.");
+
+			return Podcast.findOneAndUpdate(
+				{'_id': episode.podcast_id},
+				{$push: {'episodes': episode._id}},
+				{new: true}
+			)
+			.exec();// execute the above query, returns promise
+		})
 		//Close db connection
 		.then(function(podcastDoc) {
-			console.log('successfully saved Image to Podcast');
+			console.log('successfully saved Episode to Podcast');
 
 			mongoose.disconnect();
 			console.log('disconnected');
