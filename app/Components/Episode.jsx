@@ -19,10 +19,18 @@ export default React.createClass({
   },
   render() {
     return (
-      <div className="container">
-        <h1>{this.state.episode.title}</h1>
-        {this.props.children}
-      </div>
+			<div className="container">
+				<div className="row">
+					<div className="col-md-12">
+						<div className="panel panel-default">
+							<div className="panel-heading">
+								<h1>{this.state.episode.title}</h1>
+							</div>
+							{this.props.children}
+						</div>
+					</div>
+				</div>
+			</div>
     )
   }
 });

@@ -42,12 +42,22 @@ export default React.createClass({
     }.bind(this));
     return (
       <div className="container">
-        <h1>{this.state.podcast.title}</h1>
-        <p>{this.state.podcast.description}</p>
-        <ul>
-        {episodeNavLinks}
-        </ul>
-        {this.props.children}
+        <div className="row">
+          <div className="col-md-12">
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <h1>{this.state.podcast.title}</h1>
+                <p>{this.state.podcast.description}</p>
+              </div>
+              <div className="panel-body">
+                <ul>
+                  {episodeNavLinks}
+                </ul>
+              </div>
+            </div>
+            {this.props.children}
+          </div>
+        </div>
       </div>
     )
   }

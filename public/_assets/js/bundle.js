@@ -26621,16 +26621,36 @@
 	      'div',
 	      { className: 'container' },
 	      _react2.default.createElement(
-	        'h1',
-	        null,
-	        'Podcasts'
-	      ),
-	      _react2.default.createElement(
-	        'ul',
-	        null,
-	        podastNavLinks
-	      ),
-	      this.props.children
+	        'div',
+	        { className: 'row' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'col-md-12' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'panel panel-default' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'panel-heading' },
+	              _react2.default.createElement(
+	                'h1',
+	                null,
+	                'Podcasts'
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'panel-body' },
+	              _react2.default.createElement(
+	                'ul',
+	                null,
+	                podastNavLinks
+	              ),
+	              this.props.children
+	            )
+	          )
+	        )
+	      )
 	    );
 	  }
 	});
@@ -27573,21 +27593,41 @@
 	      'div',
 	      { className: 'container' },
 	      _react2.default.createElement(
-	        'h1',
-	        null,
-	        this.state.podcast.title
-	      ),
-	      _react2.default.createElement(
-	        'p',
-	        null,
-	        this.state.podcast.description
-	      ),
-	      _react2.default.createElement(
-	        'ul',
-	        null,
-	        episodeNavLinks
-	      ),
-	      this.props.children
+	        'div',
+	        { className: 'row' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'col-md-12' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'panel panel-default' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'panel-heading' },
+	              _react2.default.createElement(
+	                'h1',
+	                null,
+	                this.state.podcast.title
+	              ),
+	              _react2.default.createElement(
+	                'p',
+	                null,
+	                this.state.podcast.description
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'panel-body' },
+	              _react2.default.createElement(
+	                'ul',
+	                null,
+	                episodeNavLinks
+	              )
+	            )
+	          ),
+	          this.props.children
+	        )
+	      )
 	    );
 	  }
 	});
@@ -27639,11 +27679,27 @@
 	      'div',
 	      { className: 'container' },
 	      _react2.default.createElement(
-	        'h1',
-	        null,
-	        this.state.episode.title
-	      ),
-	      this.props.children
+	        'div',
+	        { className: 'row' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'col-md-12' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'panel panel-default' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'panel-heading' },
+	              _react2.default.createElement(
+	                'h1',
+	                null,
+	                this.state.episode.title
+	              )
+	            ),
+	            this.props.children
+	          )
+	        )
+	      )
 	    );
 	  }
 	});

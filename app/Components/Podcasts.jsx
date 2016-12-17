@@ -25,11 +25,21 @@ export default React.createClass({
     });
     return (
       <div className="container">
-        <h1>Podcasts</h1>
-        <ul>
-          {podastNavLinks}
-        </ul>
-        {this.props.children}
+       <div className="row">
+          <div className="col-md-12">
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <h1>Podcasts</h1>
+              </div>
+              <div className="panel-body">
+                <ul>
+                  {podastNavLinks}
+                </ul>
+                {this.props.children}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
