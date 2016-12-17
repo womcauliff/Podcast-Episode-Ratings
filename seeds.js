@@ -91,6 +91,26 @@ Podcast
 			)
 			.exec();// execute the above query, returns promise
 		})
+		.then(function(podcastDoc){
+			console.log("Podcast loaded successfully.");
+
+			var Episode115 = new Episode({
+				title: "Ep. 115 –  Getting a Computer Science Degree (Terri Burns)",
+				podcast_id : podcastDoc._id
+			});
+			return Episode115.save();//returns promise
+		})
+		//Add the episode to the podcast
+		.then(function(episode) {
+			console.log("Episode loaded successfully.");
+
+			return Podcast.findOneAndUpdate(
+				{'_id': episode.podcast_id},
+				{$push: {'episodes': episode._id}},
+				{new: true}
+			)
+			.exec();// execute the above query, returns promise
+		})
 		//Save Image to db
 		.then(function(podcastDoc){
 			console.log('successfully saved Episode to Podcast');
