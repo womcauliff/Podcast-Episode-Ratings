@@ -17,7 +17,11 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:podcast_title', function(req, res, next) {
-	Podcast.findOne({'url_title' : req.params.podcast_title}, function(err, podcast) {
+	Podcast.findOne({'url_title' : req.params.podcast_title})
+	// and populate all of the episodes associated with it.
+	.populate('episodes')
+	.populate('image')
+	.exec(function(err, podcast) {
 		// Returns error from db to be handled by error handling middleware
 		if (err) {
 			console.log(err);
@@ -31,21 +35,21 @@ router.get('/:podcast_title', function(req, res, next) {
 			return next(err);
 		}
 		else {
-			res.json(podcast);
+			res.json({"data" : podcast});
 		}
 	});
 });
 
-router.get('/:podcast_title/p/:page_number', function(req, res, next) {
-	//Throws 404 error if page_number is NaN
-	if(isNaN(req.params.page_number)) {
-		var err = new Error();
-		err.status = 404;
-		return next(err);
-	}
-	else{
-		res.send({ "page" : parseInt(req.params.page_number)});
-	}
-});
+// router.get('/:podcast_title/p/:page_number', function(req, res, next) {
+// 	//Throws 404 error if page_number is NaN
+// 	if(isNaN(req.params.page_number)) {
+// 		var err = new Error();
+// 		err.status = 404;
+// 		return next(err);
+// 	}
+// 	else{
+// 		res.send({ "page" : parseInt(req.params.page_number)});
+// 	}
+// });
 
 module.exports = router;

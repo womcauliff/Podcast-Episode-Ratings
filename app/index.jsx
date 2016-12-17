@@ -12,11 +12,14 @@ render((
   <Router history={hashHistory}>
     <Route path="/" component={App}>
     	<IndexRoute component={Main}/>
-      <Route path="/podcast" component={Podcasts}>
-        <Route path="/podcast/:url_title" component={Podcast}/>
-        	{/* <Route path="/podcast/:url_title/:ep_url_title" component={Episode}> 
-        </Route>*/}
-      </Route>
+      <Route path="/podcast" component={Podcasts}/>
+      <Route path="/podcast/:url_title" component={Podcast}/>
+      <Route path="/podcast/:url_title/:ep_id" component={Episode}/>
+      {/* 
+      <Route path="/podcast/:url_title" component={Podcast}>
+      	<Route path="/podcast/:url_title/:ep_id" component={Episode}/>
+      </Route> 
+    	*/}
       <Route path="/about" component={About}/>
     </Route>
   </Router>

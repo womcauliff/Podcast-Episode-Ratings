@@ -19,14 +19,13 @@ export default React.createClass({
     var podastNavLinks = this.state.allPodcasts.map(function(podcast, i) {
       return (<li key={i}>
         <NavLink to={`/podcast/${podcast.url_title}`}>
-        {podcast.title} - {podcast.description}
+        {podcast.title}
         </NavLink>
       </li>)
     });
     return (
-      <div>
-        <h2>Podcasts</h2>
-        <pre><code>{JSON.stringify(this.state)}</code></pre>
+      <div className="container">
+        <h1>Podcasts</h1>
         <ul>
           {podastNavLinks}
         </ul>

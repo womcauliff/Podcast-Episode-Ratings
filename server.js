@@ -34,9 +34,11 @@ app.use(express.static(process.cwd() + '/public'));
 
 // Imports and mounts express Router objects
 var podcast_routes = require('./controllers/podcast_routes.js');
+var episode_routes = require('./controllers/episode_routes.js');
 var error_handling = require('./controllers/error_handling.js');
 
 app.use('/api/podcast', podcast_routes);
+app.use('/api/episode', episode_routes);
 
 // Assumes 404, as no routes above responded
 app.get('*', function(req, res, next){

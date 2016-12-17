@@ -1,18 +1,53 @@
 import React from 'react'
+import NavLink from './NavLink.jsx'
+import APIUtils from './utils/APIUtils.jsx'
 
 export default React.createClass({
-	/*fetch(this.props.params.url_title).then(
-	set the results to the state of this component
-
-	use lifecycle update this component with a list of child components for episodes
-
-	)
-
-	*/
+	getInitialState: function(){
+    return {
+      podcast : {
+      	title : "",
+			  url_title : "",
+			  link : "",
+			  description : "",
+			  language : ""
+      },
+      episodes : []
+    }
+  },
+  componentDidMount: function()  {
+    APIUtils.getPodcast(this.props.params.url_title)
+    .then((response)=>{
+      this.setState({
+        podcast : {
+        	title : response.data.title,
+        	url_title : response.data.url_title,
+        	link : response.data.link,
+        	description : response.data.description,
+        	language : response.data.language
+        },
+        episodes : response.data.episodes
+      })
+    });
+  },
   render() {
+  	var episodeNavLinks = this.state.episodes.map(function(episode, i) {
+	    return (
+	      <li key={i}>
+	        <NavLink 
+	        	to={`/podcast/${this.props.params.url_title}/${episode._id}`}>
+	        	{episode.title}
+	        </NavLink>
+	      </li>)
+    }.bind(this));
     return (
-      <div>
-        <h2>{this.props.params.url_title}</h2>
+      <div className="container">
+        <h1>{this.state.podcast.title}</h1>
+        <p>{this.state.podcast.description}</p>
+        <ul>
+        {episodeNavLinks}
+        </ul>
+        {this.props.children}
       </div>
     )
   }

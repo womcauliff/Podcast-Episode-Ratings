@@ -87,11 +87,9 @@
 	    _reactRouter.Route,
 	    { path: '/', component: _App2.default },
 	    _react2.default.createElement(_reactRouter.IndexRoute, { component: _Main2.default }),
-	    _react2.default.createElement(
-	      _reactRouter.Route,
-	      { path: '/podcast', component: _Podcasts2.default },
-	      _react2.default.createElement(_reactRouter.Route, { path: '/podcast/:url_title', component: _Podcast2.default })
-	    ),
+	    _react2.default.createElement(_reactRouter.Route, { path: '/podcast', component: _Podcasts2.default }),
+	    _react2.default.createElement(_reactRouter.Route, { path: '/podcast/:url_title', component: _Podcast2.default }),
+	    _react2.default.createElement(_reactRouter.Route, { path: '/podcast/:url_title/:ep_id', component: _Episode2.default }),
 	    _react2.default.createElement(_reactRouter.Route, { path: '/about', component: _About2.default })
 	  )
 	), document.getElementById('app'));
@@ -26415,11 +26413,6 @@
 	      'div',
 	      null,
 	      _react2.default.createElement(
-	        'h1',
-	        null,
-	        'React Router Tutorial'
-	      ),
-	      _react2.default.createElement(
 	        'ul',
 	        { role: 'nav' },
 	        _react2.default.createElement(
@@ -26620,28 +26613,17 @@
 	        _react2.default.createElement(
 	          _NavLink2.default,
 	          { to: '/podcast/' + podcast.url_title },
-	          podcast.title,
-	          ' - ',
-	          podcast.description
+	          podcast.title
 	        )
 	      );
 	    });
 	    return _react2.default.createElement(
 	      'div',
-	      null,
+	      { className: 'container' },
 	      _react2.default.createElement(
-	        'h2',
+	        'h1',
 	        null,
 	        'Podcasts'
-	      ),
-	      _react2.default.createElement(
-	        'pre',
-	        null,
-	        _react2.default.createElement(
-	          'code',
-	          null,
-	          JSON.stringify(this.state)
-	        )
 	      ),
 	      _react2.default.createElement(
 	        'ul',
@@ -26694,6 +26676,39 @@
 				return response.json();
 			}, function (error) {
 				error.message; //=> String
+			});
+		},
+	
+		getPodcast: function getPodcast(podcast_url_title) {
+			return fetch("/api/podcast/" + podcast_url_title, {
+				method: "GET",
+				credentials: "same-origin"
+			}).then(function (response) {
+				response.status; //=> number 100–599
+				response.statusText; //=> String
+				response.headers; //=> Headers
+				response.url; //=> String
+	
+				return response.json();
+			}, function (error) {
+				error.message; //=> String
+			});
+		},
+	
+		getEpisode: function getEpisode(episode_id) {
+			console.log("APIUtils episode_id: " + episode_id);
+			return fetch("/api/episode/" + episode_id, {
+				method: "GET",
+				credentials: "same-origin"
+			}).then(function (response) {
+				response.status; //=> number 100–599
+				response.statusText; //=> String
+				response.headers; //=> Headers
+				response.url; //=> String
+	
+				return response.json();
+			}, function (error) {
+				error.message;
 			});
 		}
 	};
@@ -27500,34 +27515,138 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _NavLink = __webpack_require__(234);
+	
+	var _NavLink2 = _interopRequireDefault(_NavLink);
+	
+	var _APIUtils = __webpack_require__(238);
+	
+	var _APIUtils2 = _interopRequireDefault(_APIUtils);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = _react2.default.createClass({
 	  displayName: 'Podcast',
 	
-	  /*fetch(this.props.params.url_title).then(
-	  set the results to the state of this component
-	  	use lifecycle update this component with a list of child components for episodes
-	  	)
-	  	*/
+	  getInitialState: function getInitialState() {
+	    return {
+	      podcast: {
+	        title: "",
+	        url_title: "",
+	        link: "",
+	        description: "",
+	        language: ""
+	      },
+	      episodes: []
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    var _this = this;
+	
+	    _APIUtils2.default.getPodcast(this.props.params.url_title).then(function (response) {
+	      _this.setState({
+	        podcast: {
+	          title: response.data.title,
+	          url_title: response.data.url_title,
+	          link: response.data.link,
+	          description: response.data.description,
+	          language: response.data.language
+	        },
+	        episodes: response.data.episodes
+	      });
+	    });
+	  },
 	  render: function render() {
+	    var episodeNavLinks = this.state.episodes.map(function (episode, i) {
+	      return _react2.default.createElement(
+	        'li',
+	        { key: i },
+	        _react2.default.createElement(
+	          _NavLink2.default,
+	          {
+	            to: '/podcast/' + this.props.params.url_title + '/' + episode._id },
+	          episode.title
+	        )
+	      );
+	    }.bind(this));
 	    return _react2.default.createElement(
 	      'div',
-	      null,
+	      { className: 'container' },
 	      _react2.default.createElement(
-	        'h2',
+	        'h1',
 	        null,
-	        this.props.params.url_title
-	      )
+	        this.state.podcast.title
+	      ),
+	      _react2.default.createElement(
+	        'p',
+	        null,
+	        this.state.podcast.description
+	      ),
+	      _react2.default.createElement(
+	        'ul',
+	        null,
+	        episodeNavLinks
+	      ),
+	      this.props.children
 	    );
 	  }
 	});
 
 /***/ },
 /* 243 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _NavLink = __webpack_require__(234);
+	
+	var _NavLink2 = _interopRequireDefault(_NavLink);
+	
+	var _APIUtils = __webpack_require__(238);
+	
+	var _APIUtils2 = _interopRequireDefault(_APIUtils);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = _react2.default.createClass({
+	  displayName: 'Episode',
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      episode: ""
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    var _this = this;
+	
+	    console.log(this.props.params.ep_id);
+	    _APIUtils2.default.getEpisode(this.props.params.ep_id).then(function (response) {
+	      _this.setState({
+	        episode: response.data
+	      });
+	    });
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'container' },
+	      _react2.default.createElement(
+	        'h1',
+	        null,
+	        this.state.episode.title
+	      ),
+	      this.props.children
+	    );
+	  }
+	});
 
 /***/ }
 /******/ ]);
